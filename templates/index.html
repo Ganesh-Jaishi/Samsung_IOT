@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoT Security Monitor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        /* Status Alert */
+        .status-alert {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            text-align: center;
+        }
+
+        .status-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 15px 0;
+        }
+
+        .status-safe {
+            color: #27ae60;
+        }
+
+        .status-alert-active {
+            color: #e74c3c;
+            animation: pulse 1s infinite;
+        }
+
+        .status-time {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin-top: 10px;
+        }
+
+        /* Sensor Grid */
+        .sensors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .sensor-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .sensor-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.2);
+        }
+
+        .sensor-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .sensor-icon {
+            font-size: 2rem;
+            margin-right: 15px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .motion-icon { background: linear-gradient(45deg, #3498db, #2980b9); }
+        .distance-icon { background: linear-gradient(45deg, #e74c3c, #c0392b); }
+        .temp-icon { background: linear-gradient(45deg, #f39c12, #e67e22); }
+        .humidity-icon { background: linear-gradient(45deg, #1abc9c, #16a085); }
+
+        .sensor-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .sensor-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .sensor-status {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin-top: 10px;
+        }
+
+        /* Intrusion UI removed */
+
+        /* Animations */
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        .alert-pulse {
+            animation: pulse 0.8s infinite;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .sensors-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .sensor-value {
+                font-size: 2rem;
+            }
+
+            .intrusion-logic {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1><i class="fas fa-shield-alt"></i> IoT Security Monitor</h1>
+            <p class="subtitle">Real-Time Intrusion Detection System</p>
+        </header>
+
+        <!-- Status Alert -->
+        <div class="status-alert">
+            <h2><i class="fas fa-exclamation-triangle"></i> System Status</h2>
+            <div class="status-value" id="intrusionValue">
+                <i class="fas fa-spinner fa-spin"></i> Initializing...
+            </div>
+            <div class="status-time">Last Updated: <span id="lastUpdated">--:--:--</span></div>
+        </div>
+
+        <!-- Sensor Readings -->
+        <div class="sensors-grid">
+            <!-- Motion Detection -->
+            <div class="sensor-card">
+                <div class="sensor-header">
+                    <div class="sensor-icon motion-icon">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <div class="sensor-title">Motion Sensor</div>
+                </div>
+                <div class="sensor-value" id="pirValue">--</div>
+                <div class="sensor-status">PIR Motion Detection</div>
+            </div>
+
+            <!-- Distance Sensor -->
+            <div class="sensor-card">
+                <div class="sensor-header">
+                    <div class="sensor-icon distance-icon">
+                        <i class="fas fa-ruler"></i>
+                    </div>
+                    <div class="sensor-title">Distance Sensor</div>
+                </div>
+                <div class="sensor-value" id="distanceValue">-- <span style="font-size: 1rem;">cm</span></div>
+                <div class="sensor-status">Ultrasonic Distance Measurement</div>
+            </div>
+
+            <!-- Temperature -->
+            <div class="sensor-card">
+                <div class="sensor-header">
+                    <div class="sensor-icon temp-icon">
+                        <i class="fas fa-thermometer-half"></i>
+                    </div>
+                    <div class="sensor-title">Temperature</div>
+                </div>
+                <div class="sensor-value" id="temperatureValue">-- <span style="font-size: 1rem;">°C</span></div>
+                <div class="sensor-status">Ambient Temperature</div>
+            </div>
+
+            <!-- Humidity -->
+            <div class="sensor-card">
+                <div class="sensor-header">
+                    <div class="sensor-icon humidity-icon">
+                        <i class="fas fa-tint"></i>
+                    </div>
+                    <div class="sensor-title">Humidity</div>
+                </div>
+                <div class="sensor-value" id="humidityValue">-- <span style="font-size: 1rem;">%</span></div>
+                <div class="sensor-status">Relative Humidity</div>
+            </div>
+        </div>
+
+        <!-- Intrusion Detection section removed -->
+    </div>
+
+    <script>
+        // Configuration
+        const API_URL = '/api/data';
+        const UPDATE_INTERVAL = 2000; // 2 seconds
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDashboard();
+            setInterval(updateDashboard, UPDATE_INTERVAL);
+        });
+
+        // Update dashboard with sensor data
+        async function updateDashboard() {
+            try {
+                const response = await fetch(API_URL);
+                const data = await response.json();
+
+                updateSensors(data);
+                updateSystemStatus(data);
+                updateTimestamp();
+
+            } catch (error) {
+                console.error('Error updating dashboard:', error);
+                showError('Connection Error');
+            }
+        }
+
+        // Update sensor values
+        function updateSensors(data) {
+            // Motion sensor
+            document.getElementById('pirValue').textContent = data.pir_motion ? 'DETECTED' : 'CLEAR';
+
+            // Distance sensor
+            const distance = data.distance >= 0 ? data.distance.toFixed(1) : '--';
+            document.getElementById('distanceValue').innerHTML = `${distance} <span style="font-size: 1rem;">cm</span>`;
+
+            // Temperature
+            const temp = data.temperature !== null ? data.temperature.toFixed(1) : '--';
+            document.getElementById('temperatureValue').innerHTML = `${temp} <span style="font-size: 1rem;">°C</span>`;
+
+            // Humidity
+            const humidity = data.humidity !== null ? data.humidity.toFixed(1) : '--';
+            document.getElementById('humidityValue').innerHTML = `${humidity} <span style="font-size: 1rem;">%</span>`;
+        }
+
+        // Update system status (keeps the top status banner updated)
+        function updateSystemStatus(data) {
+            const intrusionValue = document.getElementById('intrusionValue');
+
+            if (data.intrusion_detected) {
+                intrusionValue.textContent = '🚨 INTRUSION DETECTED!';
+                intrusionValue.className = 'status-value status-alert-active';
+            } else {
+                intrusionValue.textContent = '✅ System Secure';
+                intrusionValue.className = 'status-value status-safe';
+            }
+        }
+
+        // Update timestamp
+        function updateTimestamp() {
+            const now = new Date();
+            document.getElementById('lastUpdated').textContent = now.toLocaleTimeString();
+        }
+
+        // Show error state
+        function showError(message) {
+            document.getElementById('intrusionValue').textContent = `❌ ${message}`;
+            document.getElementById('intrusionValue').className = 'status-value status-alert-active';
+        }
+    </script>
+</body>
+</html>

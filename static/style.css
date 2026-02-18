@@ -1,0 +1,401 @@
+/* ============================================================================
+   style.css - Dashboard Styling
+   Responsive design optimized for Raspberry Pi 7-inch display and desktop
+   ============================================================================ */
+
+/* ============================================================================
+   ROOT & GLOBAL STYLES
+   ============================================================================ */
+
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #3498db;
+    --success-color: #51cf66;
+    --danger-color: #ff6b6b;
+    --warning-color: #ffa500;
+    --light-bg: #ecf0f1;
+    --dark-bg: #1a1a1a;
+    --text-color: #333;
+    --border-color: #bdc3c7;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: var(--text-color);
+    line-height: 1.6;
+    min-height: 100vh;
+    padding: 10px;
+}
+
+/* ============================================================================
+   CONTAINER LAYOUT
+   ============================================================================ */
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* ============================================================================
+   HEADER
+   ============================================================================ */
+
+.header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    text-align: center;
+    border-bottom: 4px solid var(--danger-color);
+}
+
+.header h1 {
+    font-size: 28px;
+    margin-bottom: 5px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.header .subtitle {
+    font-size: 14px;
+    opacity: 0.9;
+    margin: 0;
+}
+
+/* ============================================================================
+   STATUS SECTION - Main Alert Display
+   ============================================================================ */
+
+.status-section {
+    padding: 20px;
+    background: #f8f9fa;
+}
+
+.status-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 25px;
+    border-radius: 10px;
+    border-left: 6px solid var(--border-color);
+    background: white;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+}
+
+.status-card.safe {
+    border-left-color: var(--success-color);
+    background: linear-gradient(to right, #f0fff4, #ffffff);
+}
+
+.status-card.alert {
+    border-left-color: var(--danger-color);
+    background: linear-gradient(to right, #fff5f5, #ffffff);
+    animation: pulse-alert 1s infinite;
+}
+
+@keyframes pulse-alert {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.4); }
+    50% { box-shadow: 0 0 0 10px rgba(255, 107, 107, 0); }
+}
+
+.status-icon {
+    font-size: 48px;
+    min-width: 80px;
+    text-align: center;
+}
+
+.status-content h2 {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.status-value {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 8px 0;
+    transition: color 0.3s ease;
+}
+
+.status-time {
+    font-size: 12px;
+    color: #999;
+    margin: 0;
+}
+
+/* ============================================================================
+   SENSORS SECTION - Data Display Grid
+   ============================================================================ */
+
+.sensors-section {
+    padding: 20px;
+    background: white;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.sensor-card {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.sensor-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--secondary-color);
+}
+
+.sensor-icon {
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+.sensor-card h3 {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.sensor-value {
+    font-size: 22px;
+    font-weight: bold;
+    margin: 10px 0;
+    transition: color 0.3s ease;
+}
+
+/* ============================================================================
+   PROGRESS BARS - Visual Indicators
+   ============================================================================ */
+
+.sensor-bar {
+    width: 100%;
+    height: 8px;
+    background: #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 10px 0;
+}
+
+.sensor-bar {
+    transition: width 0.5s ease, background-color 0.5s ease;
+}
+
+.distance-bar-container {
+    width: 100%;
+    height: 12px;
+    background: #e0e0e0;
+    border-radius: 6px;
+    overflow: hidden;
+    margin: 10px 0;
+}
+
+.distance-bar {
+    height: 100%;
+    background: #51cf66;
+    border-radius: 6px;
+    transition: width 0.5s ease, background-color 0.5s ease;
+}
+
+.threshold-info {
+    font-size: 12px;
+    color: #666;
+    margin-top: 8px;
+}
+
+/* Temperature bar styles */
+.temp-bar-container {
+    width: 100%;
+    height: 12px;
+    background: #e0e0e0;
+    border-radius: 6px;
+    overflow: hidden;
+    margin: 10px 0;
+}
+
+.temp-bar {
+    height: 100%;
+    background: #51cf66;
+    border-radius: 6px;
+    transition: width 0.5s ease, background-color 0.5s ease;
+}
+
+.temp-range {
+    font-size: 12px;
+    color: #666;
+    margin-top: 8px;
+}
+
+/* Humidity bar styles */
+.humidity-bar-container {
+    width: 100%;
+    height: 12px;
+    background: #e0e0e0;
+    border-radius: 6px;
+    overflow: hidden;
+    margin: 10px 0;
+}
+
+.humidity-bar {
+    height: 100%;
+    background: #51cf66;
+    border-radius: 6px;
+    transition: width 0.5s ease, background-color 0.5s ease;
+}
+
+.humidity-range {
+    font-size: 12px;
+    color: #666;
+    margin-top: 8px;
+}
+
+/* Sound bar styles */
+.sound-bar-container {
+    width: 100%;
+    height: 12px;
+    background: #e0e0e0;
+    border-radius: 6px;
+    overflow: hidden;
+    margin: 10px 0;
+}
+
+.sound-bar {
+    height: 100%;
+    background: #51cf66;
+    border-radius: 6px;
+    transition: width 0.5s ease, background-color 0.5s ease;
+}
+
+.sound-range {
+    font-size: 12px;
+    color: #666;
+    margin-top: 8px;
+}
+
+.cloud-source {
+    font-size: 12px;
+    color: #999;
+    margin-top: 8px;
+    font-weight: 500;
+}
+
+/* ============================================================================
+   DETAILS SECTION
+   ============================================================================ */
+
+.details-section {
+    padding: 20px;
+    background: #f8f9fa;
+    border-top: 1px solid var(--border-color);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: white;
+    border-radius: 6px;
+    border-left: 4px solid var(--secondary-color);
+}
+
+.detail-label {
+    font-weight: 600;
+    color: #555;
+    font-size: 13px;
+}
+
+.detail-value {
+    font-weight: bold;
+    color: var(--secondary-color);
+    font-size: 14px;
+}
+
+/* ============================================================================
+   FOOTER
+   ============================================================================ */
+
+.footer {
+    background: var(--primary-color);
+    color: white;
+    text-align: center;
+    padding: 15px;
+    font-size: 12px;
+    margin-top: auto;
+}
+
+.footer p {
+    margin: 3px 0;
+}
+
+/* ============================================================================
+   ALERT NOTIFICATIONS
+   ============================================================================ */
+
+.alert-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    border-radius: 8px;
+    background: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: none;
+    z-index: 1000;
+    max-width: 300px;
+    font-weight: 600;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.alert-notification.success {
+    background: linear-gradient(to right, var(--success-color), #40c057);
+    color: white;
+    border-left: 4px solid white;
+}
+
+.alert-notification.danger {
+    background: linear-gradient(to right, var(--danger-color), #fa5252);
+    color: white;
+    border-left: 4px solid white;
+    animation: slideIn 0.3s ease, pulse 0.5s ease infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+}
